@@ -14,6 +14,10 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
+app.get('/', (req, res) => {
+    res.send('Welcome to TGC Tracker API!');
+});
+
 mongoose.connect(connection.uri)
   .then(() => {
     routerApi(app)
