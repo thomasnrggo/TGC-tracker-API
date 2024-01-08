@@ -11,7 +11,14 @@ exports.signup = async (req, res) => {
         }
         user = new User({ username, email, password });
         await user.save();
-        res.status(201).json(user);
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+        user = user.toObject();
+        delete user.password; 
+
+        res.status(200).json({ user, token });
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -20,7 +27,7 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        let user = await User.findOne({ email });
         if (!user){
             return res.status(401).json({ message: 'User does not exist' });
         }
@@ -29,7 +36,11 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Authentication failed' });
         }
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-        res.status(200).json({ token });
+
+        user = user.toObject();
+        delete user.password; 
+
+        res.status(200).json({ user, token });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
