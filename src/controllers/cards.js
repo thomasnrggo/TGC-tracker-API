@@ -45,7 +45,12 @@ exports.removeFromCollection = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const cardIndex = user.cards.findIndex(card => card.toString() === cardId);
+        const card = await Card.findOne({ id: cardId });
+        if (!card) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+
+        const cardIndex = user.cards.findIndex(userCard => userCard.equals(card._id));
         if (cardIndex === -1) {
             return res.status(404).json({ message: 'Card not found in user collection' });
         }
@@ -58,6 +63,7 @@ exports.removeFromCollection = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 exports.addToWishlist = async (req, res) => {
     try {
