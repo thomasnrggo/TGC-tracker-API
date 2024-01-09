@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('Welcome to TGC Tracker API!');
+    res.send('Welcome to TGC Tracker API!, api has been initialized!');
 });
 
 mongoose.connect(connection.uri)
