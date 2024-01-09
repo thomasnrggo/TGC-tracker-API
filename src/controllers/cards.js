@@ -50,6 +50,8 @@ exports.removeFromCollection = async (req, res) => {
             return res.status(404).json({ message: 'Card not found' });
         }
 
+        console.log(card);
+
         const cardIndex = user.cards.findIndex(userCard => userCard.equals(card._id));
         if (cardIndex === -1) {
             return res.status(404).json({ message: 'Card not found in user collection' });
@@ -99,19 +101,25 @@ exports.addToWishlist = async (req, res) => {
 exports.removeFromWishlist = async (req, res) => {
     try {
         const { userId, cardId } = req.params;
-        const user = await User.findById(userId);
 
+        const card = await Card.findOne({ id: cardId });
+        if (!card) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.wishlist = user.wishlist.filter(item => item.toString() !== cardId);
+        user.wishlist = user.wishlist.filter(wishlistCardId => !wishlistCardId.equals(card._id));
         await user.save();
         res.status(200).json({ message: 'Card removed from wishlist' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 
 exports.getUserCards = async (req, res) => {
