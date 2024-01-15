@@ -42,7 +42,7 @@ describe('Authenticate Middleware', () => {
     expect(jwt.verify).toHaveBeenCalledWith('testtoken', process.env.JWT_SECRET)
     expect(mockRes.status).toHaveBeenCalledWith(401)
     expect(mockRes.json).toHaveBeenCalledWith({
-      message: 'Authentication aksdkamk',
+      message: 'Authentication failed',
     })
     expect(mockNext).not.toHaveBeenCalled()
   })
